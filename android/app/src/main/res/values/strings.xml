@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ExpenseTrackr</string>
+    <string name="title_activity_main">ExpenseTrackr</string>
+    <string name="package_name">io.expensetrackr.app</string>
+    <string name="custom_url_scheme">io.expensetrackr.app</string>
+</resources>
