@@ -34,8 +34,33 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x android/gradlew
         
+      - name: Set Java compatibility version for Capacitor
+        run: |
+          echo "Setting Java compatibility version to 17"
+          # Add compileOptions to app's build.gradle
+          echo "compileOptions {" >> android/app/build.gradle
+          echo "    sourceCompatibility JavaVersion.VERSION_17" >> android/app/build.gradle
+          echo "    targetCompatibility JavaVersion.VERSION_17" >> android/app/build.gradle
+          echo "}" >> android/app/build.gradle
+          
+          # Update capacitor-android build.gradle if it exists
+          if [ -f "android/capacitor-android/build.gradle" ]; then
+            sed -i '/compileOptions/,/}/d' android/capacitor-android/build.gradle
+            sed -i '/lintOptions/a \
+            compileOptions {\
+                sourceCompatibility JavaVersion.VERSION_17\
+                targetCompatibility JavaVersion.VERSION_17\
+            }' android/capacitor-android/build.gradle
+          fi
+          
+          # Creating project-wide gradle.properties file
+          echo "org.gradle.jvmargs=-Xmx2048m" > android/gradle.properties
+          echo "android.useAndroidX=true" >> android/gradle.properties
+          echo "android.enableJetifier=true" >> android/gradle.properties
+          echo "org.gradle.java.home=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.15-6/x64" >> android/gradle.properties
+        
       - name: Build Android APK
-        run: cd android && ./gradlew assembleDebug
+        run: cd android && ./gradlew assembleDebug --stacktrace
         
       - name: Upload APK
         uses: actions/upload-artifact@v4
